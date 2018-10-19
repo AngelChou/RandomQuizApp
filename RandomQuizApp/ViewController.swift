@@ -32,24 +32,37 @@ class ViewController: UIViewController {
     
     //隨機選取一個題目
     func getQuestion(){
-        //0~9隨機選取一個數字
-        let num = Int.random(in: 0...9)
-        //根據隨機選取的數字從問題集中找出題目
-        currentQuestion = question[num]
-        flagImage.image = UIImage(named: currentQuestion!.flag)
+        
+        //更新題號，若出到第10題則重來一次
         if questionNum == 10 {
             questionNum = 1
+            //還原題庫
+            setQuestion()
         } else {
             questionNum += 1
         }
         questionNumLabel.text = "\(questionNum)"
+        
+        //取得題目總數，並從中隨機選一個數字
+        let count = question.count - 1
+        var num = 0
+        if count != 0 {
+            num = Int.random(in: 1...count)
+        }
+        
+        //根據隨機選取的數字從問題集中找出題目
+        currentQuestion = question[num]
+        flagImage.image = UIImage(named: currentQuestion!.flag)
+        
+        //將出過的題目從題庫中刪除
+        question.remove(at: num)
+        
+        
+        //隱藏解答
         answerLabel.isHidden = true
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        
+    func setQuestion() {
         //將問答集存進array
         question = [Country(flag: "200px-Flag_of_Cambodia.svg.png", name: "柬埔寨"),
                     Country(flag: "200px-Flag_of_Japan.svg.png", name: "日本"),
@@ -62,6 +75,14 @@ class ViewController: UIViewController {
                     Country(flag: "224px-Flag_of_the_United_States.svg.png", name: "美國"),
                     Country(flag: "230px-Flag_of_the_United_Kingdom.svg.png", name: "英國"),
         ]
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+        
+        //建立題庫
+        setQuestion()
         
         //將題目顯示在畫面上
         getQuestion()
